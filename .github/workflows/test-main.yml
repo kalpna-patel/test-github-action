@@ -1,0 +1,80 @@
+name: Ingest Data to Azure Blob Storage
+
+on:
+#   push:
+#     branches:
+#       - main
+  workflow_dispatch:
+    inputs:
+      input_paths:
+        description: Payload file or data to be ingested
+        required: true
+        default: ./KALPNA/aak.json
+      storage_account_name:
+        description: 'Azure Storage Account Name'
+        required: true
+        default: alokstr
+      container_name:
+        description: 'Azure Blob Storage Container Name'
+        required: true
+        default: alok-cnt
+      client-id:
+        description: Client ID for OIDC authentication in key-vault
+        required: true
+        default: 45cd4042-4121-41a8-b928-179ababfde50
+      tenant-id:
+        description: Tenant ID for OIDC authentication
+        required: true
+        default: 986595ef-8677-40e7-adbf-dfca10b0321d
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  ingest-data:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if Azure CLI is installed
+        shell: bash
+        run: |
+          if ! az > /dev/null 2>&1; then
+            echo "Install Azure CLI"
+            curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+          fi
+          echo "Azure CLI Version"
+          az version
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          pip install azure-identity azure-storage-blob requests
+        shell: bash
+
+      - name: Azure OIDC Login
+        uses: azure/login@v1.5.1
+        with:
+          client-id: ${{ inputs.client-id }}
+          tenant-id: ${{ inputs.tenant-id }}
+          subscription-id: 48c1681a-7a9d-4d8e-9c0d-141d0af16ddc
+          allow-no-subscriptions: true
+
+      - name: Debug Inputs
+        run: |
+          echo "Storage Account Name: ${{ inputs.storage_account_name }}"
+          echo "Container Name: ${{ inputs.container_name }}"
+          echo "Input Paths: ${{ inputs.input_paths }}"
+        shell: bash
+
+      - name: Run ckp.py script
+        run: |
+          python ckp.py --storage-account-name "${{ inputs.storage_account_name }}" \
+                        --container-name "${{ inputs.container_name }}" \
+                        --input-paths "${{ inputs.input_paths }}"
+        shell: bash
