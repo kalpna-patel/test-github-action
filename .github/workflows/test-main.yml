@@ -9,7 +9,7 @@ on:
       input_paths:
         description: Payload file or data to be ingested
         required: true
-        default: "https://github.com/muan/unicode-emoji-json/blob/main/package-lock.json ./KALPNA/aak.json"
+        default: 'https://github.com/muan/unicode-emoji-json/blob/main/package-lock.json ./KALPNA/aak.json'
       storage_account_name:
         description: 'Azure Storage Account Name'
         required: true
