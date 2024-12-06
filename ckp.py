@@ -89,8 +89,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Ingest data into Azure Storage Account.')
     parser.add_argument('--storage-account-name', required=True, help='Azure Storage Account name')
     parser.add_argument('--container-name', required=True, help='Azure Storage Account container name')
-    parser.add_argument('--input-paths', nargs='+', required=True, help='List of local files or remote URLs to upload')
+    parser.add_argument('--input-paths', required=True, help='Comma-separated list of local files or remote URLs to upload')
     
     args = parser.parse_args()
-    main(args.storage_account_name, args.container_name, args.input_paths)
+    input_paths = args.input_paths.split(',')
+    main(args.storage_account_name, args.container_name, input_paths)
 
