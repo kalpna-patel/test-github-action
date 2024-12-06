@@ -6,7 +6,7 @@ on:
       input_paths:
         description: Payload file or data to be ingested
         required: true
-        default: './KALPNA/aak.json,https://github.com/muan/unicode-emoji-json/blob/main/package-lock.json'
+        default: 'https://github.com/muan/unicode-emoji-json/blob/main/package-lock.json,https://github.com/cambecc/grib2json/blob/master/pom.xml'
       storage_account_name:
         description: 'Azure Storage Account Name'
         required: true
